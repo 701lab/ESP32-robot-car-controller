@@ -46,14 +46,19 @@
 					</table>
 				</div>
 			</div>
-			<div class="joystickContainer" id="joystickContainer1"></div>
+			<div class="joystickContainer" id ="leftContainer">
+				<div id="joystickContainer1"></div>
+			</div>
 		</div>
 
 
 		<div class="columnCetral">
 			<h2>JoySticks Controller</h2>
 			<b>Version 1.0</b><br>
-			<span id="debugSpan"></span>
+			<span id="connectionStatus" style="background-color: crimson; color: white; opacity: 70%; padding: 2px;">No connection</span><br>
+			<!-- <span id="hostsName" style="background-color: yellowgreen; color: white; opacity: 70%;">No connection</span> -->
+			<span id="hostname"></span><br>
+			<span id="debugSpan">C C</span>
 		</div>
 
 
@@ -91,7 +96,9 @@
 					</table>
 				</div>
 			</div>
-			<div class="joystickContainer" id="joystickContainer2"></div>
+			<div class="joystickContainer" id="rightContainer">
+				<div id="joystickContainer2"></div>
+			</div>
 		</div>
 	</div>
 	
@@ -99,6 +106,9 @@
 		
 		let joystickLeft = new FlexJoystick("joystickContainer1");
 		let joystickRight = new FlexJoystick("joystickContainer2");
+		let joystickLeftContainer = document.getElementById("leftContainer");
+		let joystickRightContainer = document.getElementById("rightContainer");
+
 
 		window.addEventListener('resize', function (event) {
 			joystickLeft.resetJoystickDimensions();
@@ -107,7 +117,11 @@
 
 		document.getElementById("joystickContainer1").addEventListener("touchstart", function(event){
             document.onselectstart = () => {return false};
-            joystickLeft.handleTouchStart(event);
+		
+			let touchX = event.changedTouches[0].pageX - joystickLeftContainer.offsetLeft;
+           	let touchY = event.changedTouches[0].pageY - joystickLeftContainer.offsetTop;
+		
+			joystickLeft.handleTouchStart(event, touchX, touchY);
 
 			document.getElementById("leftJoystickX").innerHTML = joystickLeft.getStickX().toFixed(2);
 			document.getElementById("leftJoystickY").innerHTML = joystickLeft.getStickY().toFixed(2);
@@ -118,7 +132,11 @@
 
 		document.getElementById("joystickContainer2").addEventListener("touchstart", function(event){
             document.onselectstart = () => {return false};
-            joystickRight.handleTouchStart(event);
+
+			let touchX = event.changedTouches[0].pageX - joystickRightContainer.offsetLeft;
+           	let touchY = event.changedTouches[0].pageY - joystickRightContainer.offsetTop;
+
+            joystickRight.handleTouchStart(event, touchX, touchY);
 
 			document.getElementById("rightJoystickX").innerHTML = joystickRight.getStickX().toFixed(2);
 			document.getElementById("rightJoystickY").innerHTML = joystickRight.getStickY().toFixed(2);
@@ -128,53 +146,85 @@
         }, false);
         
         document.addEventListener("touchmove", function(event){
-            joystickLeft.handleTouchMove(event);
-            joystickRight.handleTouchMove(event);
-            
-			document.getElementById("leftJoystickX").innerHTML = joystickLeft.getStickX().toFixed(2);
-			document.getElementById("leftJoystickY").innerHTML = joystickLeft.getStickY().toFixed(2);
-			document.getElementById("leftJoystickDir").innerHTML = joystickLeft.getDirection(20);
+			for(let i = 0; i < event.changedTouches.length; i +=1)
+			{
+				if (event.changedTouches[i].identifier == joystickLeft.getTouchId()) {
+					let touchX = event.changedTouches[i].pageX - joystickLeftContainer.offsetLeft;
+           			let touchY = event.changedTouches[i].pageY - joystickLeftContainer.offsetTop;
 
-			document.getElementById("rightJoystickX").innerHTML = joystickRight.getStickX().toFixed(2);
-			document.getElementById("rightJoystickY").innerHTML = joystickRight.getStickY().toFixed(2);
-			document.getElementById("rightJoystickDir").innerHTML = joystickRight.getDirection(21);
+					joystickLeft.handleTouchMove(event, touchX, touchY);
 
-			updateServer();
+					document.getElementById("leftJoystickX").innerHTML = joystickLeft.getStickX().toFixed(2);
+					document.getElementById("leftJoystickY").innerHTML = joystickLeft.getStickY().toFixed(2);
+					document.getElementById("leftJoystickDir").innerHTML = joystickLeft.getDirection(20);
+
+					updateServer();
+				} else if (event.changedTouches[i].identifier == joystickRight.getTouchId()) {
+					let touchX = event.changedTouches[i].pageX - joystickRightContainer.offsetLeft;
+           			let touchY = event.changedTouches[i].pageY - joystickRightContainer.offsetTop;
+
+					joystickRight.handleTouchMove(event, touchX, touchY);
+
+					document.getElementById("rightJoystickX").innerHTML = joystickRight.getStickX().toFixed(2);
+					document.getElementById("rightJoystickY").innerHTML = joystickRight.getStickY().toFixed(2);
+					document.getElementById("rightJoystickDir").innerHTML = joystickRight.getDirection(21);
+
+					updateServer();
+				}
+			}
+
         }, false);
         
         document.addEventListener("touchend", function(event){
 			document.onselectstart = () => { return true };
-			if (event.changedTouches[0].identifier == joystickLeft.getTouchId()) {
-				let interval = setInterval(function () {
-					joystickLeft.handleAnimation();
-				}, 10);
-				joystickLeft.enableAnimation(interval);
+
+			for(let i = 0; i < event.changedTouches.length; i +=1)
+			{
+				if (event.changedTouches[i].identifier == joystickLeft.getTouchId()) {
+					let interval = setInterval(function () {
+						joystickLeft.handleAnimation();
+					}, 10);
+					joystickLeft.enableAnimation(interval);
+
+					joystickLeft.handleTouchEnd(event, true);
+
+					document.getElementById("leftJoystickX").innerHTML = joystickLeft.getStickX().toFixed(2);
+					document.getElementById("leftJoystickY").innerHTML = joystickLeft.getStickY().toFixed(2);
+					document.getElementById("leftJoystickDir").innerHTML = joystickLeft.getDirection(20);
+
+					updateServer();
+				}
+				if (event.changedTouches[i].identifier == joystickRight.getTouchId()) {
+					let interval = setInterval(function () {
+						joystickRight.handleAnimation();
+					}, 10);
+					joystickRight.enableAnimation(interval);
+
+					joystickRight.handleTouchEnd(event, true);
+
+					document.getElementById("rightJoystickX").innerHTML = joystickRight.getStickX().toFixed(2);
+					document.getElementById("rightJoystickY").innerHTML = joystickRight.getStickY().toFixed(2);
+					document.getElementById("rightJoystickDir").innerHTML = joystickRight.getDirection(21);
+
+					updateServer();
+				}
 			}
-			if (event.changedTouches[0].identifier == joystickRight.getTouchId()) {
-				let interval = setInterval(function () {
-					joystickRight.handleAnimation();
-				}, 10);
-				joystickRight.enableAnimation(interval);
-			}
-
-            joystickLeft.handleTouchEnd(event, true);
-            joystickRight.handleTouchEnd(event, true);
-
-			document.getElementById("leftJoystickX").innerHTML = joystickLeft.getStickX().toFixed(2);
-			document.getElementById("leftJoystickY").innerHTML = joystickLeft.getStickY().toFixed(2);
-			document.getElementById("leftJoystickDir").innerHTML = joystickLeft.getDirection(20);
-
-			document.getElementById("rightJoystickX").innerHTML = joystickRight.getStickX().toFixed(2);
-			document.getElementById("rightJoystickY").innerHTML = joystickRight.getStickY().toFixed(2);
-			document.getElementById("rightJoystickDir").innerHTML = joystickRight.getDirection(21);
-			
-			updateServer();
         }, false);
 
 
 		InitWebSocket()
 		function InitWebSocket() {
 			websock = new WebSocket('ws://' + window.location.hostname + '/ws');
+
+
+
+			// websock.onmessage = function(event){
+			// 	let messageJson = JSON.parse(event.data);
+			// 	if (messageJson.hasOwnProperty("hostName"))
+			// 	{
+			// 		document.getElementById
+			// 	}
+			// }
 		}
 
 		let previous_message = "C C";

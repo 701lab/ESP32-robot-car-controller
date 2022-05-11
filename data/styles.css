@@ -59,18 +59,51 @@ html{
 
 .joystickContainer
 {
-    width:45%;
+    width:90%;
     position: relative;
     display: flex;
     float: left;
     margin: 0px auto 20px auto;
     align-items: center;
-    /* background-color: #FF0000; */
+    justify-content: center;
+
+    /* background-color: yellow; */
 }
 .joystickContainer::before
 {
     content: "";
     display: block;
-    padding-top: 250%;
+    padding-top: 100%;
 }
 
+#joystickContainer2
+{
+    width:30%;
+    position: absolute;
+    display: flex;
+    float: left;
+    margin: auto;
+    align-items: center;
+}
+#joystickContainer2::before
+{
+    content: "";
+    display: block;
+    padding-top: 300%;
+}
+
+#joystickContainer1
+{
+    width:90%;
+    position: relative;
+    display: flex;
+    float: left;
+    margin: auto;
+    align-items: center;
+}
+#joystickContainer1::before
+{
+    content: "";
+    display: block;
+    padding-top: 33%;
+}
