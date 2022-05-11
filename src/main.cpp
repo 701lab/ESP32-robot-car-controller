@@ -51,10 +51,25 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
   if (type == WS_EVT_CONNECT)
   {
     Serial.println("Websocket client connection received");
+    char json_message[50] = "{\"hostName\":\"";
+    int32_t index = 0;
+    const char* ssid = get_ssid();
+    while (ssid[index])
+    {
+      json_message[index + 13] = ssid[index];
+      index += 1;
+    }
+    json_message[index + 13] = '\"';
+    json_message[index + 14] = '}';
+    Serial.println(json_message);
+    ws.textAll(json_message);
   }
   else if (type == WS_EVT_DISCONNECT)
   {
     Serial.println("Client disconnected");
+
+    uart_message[1] = 0 + 97;
+    uart_message[2] = 0 + 97;
   }
   else if (type == WS_EVT_DATA) // receive text from client
   {

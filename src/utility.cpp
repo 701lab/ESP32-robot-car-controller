@@ -63,3 +63,8 @@ void connect_to_existing_wifi(const char *ssid, const char *password)
     Serial.println(WiFi.localIP());
     Serial.println("");
 }
+
+const char* get_ssid(void)
+{
+    return ap_ssid;
+}

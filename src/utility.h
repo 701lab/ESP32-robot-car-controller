@@ -11,3 +11,5 @@ void start_access_point();
 
 // Conects to existing wifi network if possible.
 void connect_to_existing_wifi(const char* ssid, const char* password);
+
+const char* get_ssid(void);

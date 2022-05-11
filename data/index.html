@@ -56,8 +56,7 @@
 			<h2>JoySticks Controller</h2>
 			<b>Version 1.0</b><br>
 			<span id="connectionStatus" style="background-color: crimson; color: white; opacity: 70%; padding: 2px;">No connection</span><br>
-			<!-- <span id="hostsName" style="background-color: yellowgreen; color: white; opacity: 70%;">No connection</span> -->
-			<span id="hostname"></span><br>
+			<span id="hostName"></span><br>
 			<span id="debugSpan">C C</span>
 		</div>
 
@@ -216,15 +215,30 @@
 		function InitWebSocket() {
 			websock = new WebSocket('ws://' + window.location.hostname + '/ws');
 
+			websock.onopen = function(event){
+				document.getElementById("connectionStatus").innerHTML = "Connected";
+				document.getElementById("connectionStatus").style.backgroundColor = "yellowgreen";
+			}
 
+			websock.onmessage = function(event){
+				let messageJson = JSON.parse(event.data);
+				if (messageJson.hasOwnProperty("hostName"))
+				{
+					document.getElementById("hostName").innerHTML = messageJson["hostName"];
+				}
+			}
 
-			// websock.onmessage = function(event){
-			// 	let messageJson = JSON.parse(event.data);
-			// 	if (messageJson.hasOwnProperty("hostName"))
-			// 	{
-			// 		document.getElementById
-			// 	}
-			// }
+			websock.onclose = function(event){
+				document.getElementById("connectionStatus").innerHTML = "No connection";
+				document.getElementById("connectionStatus").style.backgroundColor = "crimson";
+				document.getElementById("hostName").innerHTML = "";
+				setTimeout(() => { InitWebSocket(); }, 1000);
+			}
+
+			websock.onerror = function(event){
+				websock.close();
+			}
+
 		}
 
 		let previous_message = "C C";
