@@ -1,0 +1,196 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+	<title>Joy</title>
+	<meta charset="utf-8">
+	<link rel="stylesheet" href="styles.css">
+	<meta name="viewport"
+		content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+	<script src="FlexJoystick-min.js"></script>
+</head>
+
+<body>
+	<div class="row">
+		<div class="joystickColumn">
+			<div class="header">
+				<h3 style="text-align: center;">Left Joystick</h3>
+			</div>
+			<div style="display: flex;">
+
+				<div class="dataContainer">
+					<table style="float:right;">
+						<tr>
+							<td>X:</td>
+						</tr>
+						<tr>
+							<td>Y:</td>
+						</tr>
+						<tr>
+							<td>D:</td>
+						</tr>
+					</table>
+				</div>
+
+				<div class="dataContainer">
+					<table style="float: left;">
+						<tr>
+							<td><span id="leftJoystickX">0.00</span></td>
+						</tr>
+						<tr>
+							<td><span id="leftJoystickY">0.00</span></td>
+						</tr>
+						<tr>
+							<td><span id="leftJoystickDir">C</span></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div class="joystickContainer" id="joystickContainer1"></div>
+		</div>
+
+
+		<div class="columnCetral">
+			<h2>JoySticks Controller</h2>
+			<b>Version 1.0</b><br>
+			<span id="debugSpan"></span>
+		</div>
+
+
+		<div class="joystickColumn">
+			<div class="header">
+				<h3 style="text-align: center;">Right Joystick</h3>
+			</div>
+			<div style="display: flex;">
+
+				<div class="dataContainer">
+					<table style="float:right;">
+						<tr>
+							<td>X:</td>
+						</tr>
+						<tr>
+							<td>Y:</td>
+						</tr>
+						<tr>
+							<td>D:</td>
+						</tr>
+					</table>
+				</div>
+
+				<div class="dataContainer">
+					<table style="float: left;">
+						<tr>
+							<td><span id="rightJoystickX">0.00</span></td>
+						</tr>
+						<tr>
+							<td><span id="rightJoystickY">0.00</span></td>
+						</tr>
+						<tr>
+							<td><span id="rightJoystickDir">C</span></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<div class="joystickContainer" id="joystickContainer2"></div>
+		</div>
+	</div>
+	
+	<script type="text/javascript">
+		
+		let joystickLeft = new FlexJoystick("joystickContainer1");
+		let joystickRight = new FlexJoystick("joystickContainer2");
+
+		window.addEventListener('resize', function (event) {
+			joystickLeft.resetJoystickDimensions();
+			joystickRight.resetJoystickDimensions();
+		}, true);
+
+		document.getElementById("joystickContainer1").addEventListener("touchstart", function(event){
+            document.onselectstart = () => {return false};
+            joystickLeft.handleTouchStart(event);
+
+			document.getElementById("leftJoystickX").innerHTML = joystickLeft.getStickX().toFixed(2);
+			document.getElementById("leftJoystickY").innerHTML = joystickLeft.getStickY().toFixed(2);
+			document.getElementById("leftJoystickDir").innerHTML = joystickLeft.getDirection(20);
+
+			updateServer();
+        }, false);
+
+		document.getElementById("joystickContainer2").addEventListener("touchstart", function(event){
+            document.onselectstart = () => {return false};
+            joystickRight.handleTouchStart(event);
+
+			document.getElementById("rightJoystickX").innerHTML = joystickRight.getStickX().toFixed(2);
+			document.getElementById("rightJoystickY").innerHTML = joystickRight.getStickY().toFixed(2);
+			document.getElementById("rightJoystickDir").innerHTML = joystickRight.getDirection(21);
+
+			updateServer();
+        }, false);
+        
+        document.addEventListener("touchmove", function(event){
+            joystickLeft.handleTouchMove(event);
+            joystickRight.handleTouchMove(event);
+            
+			document.getElementById("leftJoystickX").innerHTML = joystickLeft.getStickX().toFixed(2);
+			document.getElementById("leftJoystickY").innerHTML = joystickLeft.getStickY().toFixed(2);
+			document.getElementById("leftJoystickDir").innerHTML = joystickLeft.getDirection(20);
+
+			document.getElementById("rightJoystickX").innerHTML = joystickRight.getStickX().toFixed(2);
+			document.getElementById("rightJoystickY").innerHTML = joystickRight.getStickY().toFixed(2);
+			document.getElementById("rightJoystickDir").innerHTML = joystickRight.getDirection(21);
+
+			updateServer();
+        }, false);
+        
+        document.addEventListener("touchend", function(event){
+			document.onselectstart = () => { return true };
+			if (event.changedTouches[0].identifier == joystickLeft.getTouchId()) {
+				let interval = setInterval(function () {
+					joystickLeft.handleAnimation();
+				}, 10);
+				joystickLeft.enableAnimation(interval);
+			}
+			if (event.changedTouches[0].identifier == joystickRight.getTouchId()) {
+				let interval = setInterval(function () {
+					joystickRight.handleAnimation();
+				}, 10);
+				joystickRight.enableAnimation(interval);
+			}
+
+            joystickLeft.handleTouchEnd(event, true);
+            joystickRight.handleTouchEnd(event, true);
+
+			document.getElementById("leftJoystickX").innerHTML = joystickLeft.getStickX().toFixed(2);
+			document.getElementById("leftJoystickY").innerHTML = joystickLeft.getStickY().toFixed(2);
+			document.getElementById("leftJoystickDir").innerHTML = joystickLeft.getDirection(20);
+
+			document.getElementById("rightJoystickX").innerHTML = joystickRight.getStickX().toFixed(2);
+			document.getElementById("rightJoystickY").innerHTML = joystickRight.getStickY().toFixed(2);
+			document.getElementById("rightJoystickDir").innerHTML = joystickRight.getDirection(21);
+			
+			updateServer();
+        }, false);
+
+
+		InitWebSocket()
+		function InitWebSocket() {
+			websock = new WebSocket('ws://' + window.location.hostname + '/ws');
+		}
+
+		let previous_message = "C C";
+		function updateServer()
+		{
+			message = String(joystickLeft.getDirection(20)) + " " + String(joystickRight.getDirection(21) + "\0");
+			document.getElementById("debugSpan").innerHTML = message;
+			if(previous_message != message)
+			{
+				websock.send(message);
+				previous_message = message;
+			}
+		}
+
+		// setInterval(updateServer, 100);
+		</script>
+</body>
+
+</html>
