@@ -2,7 +2,7 @@
 ESP32 robot car controller is a small web-server + web page project for ESP32. It is designed to control a small differential drive mobile robot prototype. This is how web-page looks:
 
 <p align="center">
-<img src="https://github.com/701lab/ESP32-robot-car-controller/blob/main/images/joystick_controller_example.jpg" alt="borderChangeExample" width="90%">
+<img src="https://github.com/701lab/ESP32-robot-car-controller/blob/main/images/joystick_controller_example.jpg" alt="borderChangeExample" width="100%">
 </p>
 
 You can watch a project demo [here](https://photos.app.goo.gl/gQUQkC9ZNbU3YpYm9).
