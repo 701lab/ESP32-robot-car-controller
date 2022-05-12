@@ -51,15 +51,13 @@
 			</div>
 		</div>
 
-
 		<div class="columnCetral">
 			<h2>JoySticks Controller</h2>
-			<b>Version 1.0</b><br>
+			<b>Version 1.1</b><br>
 			<span id="connectionStatus" style="background-color: crimson; color: white; opacity: 70%; padding: 2px;">No connection</span><br>
 			<span id="hostName"></span><br>
 			<span id="debugSpan">C C</span>
 		</div>
-
 
 		<div class="joystickColumn">
 			<div class="header">
@@ -107,7 +105,6 @@
 		let joystickRight = new FlexJoystick("joystickContainer2");
 		let joystickLeftContainer = document.getElementById("leftContainer");
 		let joystickRightContainer = document.getElementById("rightContainer");
-
 
 		window.addEventListener('resize', function (event) {
 			joystickLeft.resetJoystickDimensions();

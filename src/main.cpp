@@ -21,8 +21,6 @@ void setup()
 {
   esp32_setup_peripherals();
 
-  start_access_point();
-
   ws.onEvent(onWsEvent);
   ws_server.addHandler(&ws);
 
@@ -33,15 +31,6 @@ void loop()
 {
   delay(100);
   Serial2.write(uart_message, 3);
-
-  // if(Serial2.available())
-  // {
-  //   uint8_t data = Serial2.read();
-  //   Serial.println("New value: " + String(data));
-  //   delay(500);
-  //   Serial2.write(data);
-  // }
-  // digitalWrite(16, !digitalRead(16));
 }
 
 void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len)
@@ -105,5 +94,4 @@ void onWsEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventTyp
 
     Serial.println("direction 1: " + String(direction_1) + " direction 2: " + String(direction_2));
   }
-
 }
