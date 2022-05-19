@@ -12,6 +12,7 @@ You can watch a project demo [here](https://photos.app.goo.gl/gQUQkC9ZNbU3YpYm9)
 - arduino framework for ESP32;
 - mostly C code wrapped around default C++ stuff for arduino.
 - plain HTML/CSS/JS;
+- [FlexJoystick](https://github.com/Trimple/FlexJoystick) library for interactable joysticks.
 
 ## Main features
 * ESP32 is configured as a wi-fi access point;
@@ -25,6 +26,13 @@ You can watch a project demo [here](https://photos.app.goo.gl/gQUQkC9ZNbU3YpYm9)
 * web-page displays the name of the robot it is connected to and connection status;
 * motors on the robot are controlled by STM32 that is not a part of this project;
 * ESP32 communicates with STM32 using simple UART-based protocol.
+
+## How to test the web-page
+1. upload the firmware to any ESP32 controller using PlatformIO;
+2. upload the filesystem image to your ESP32. If you don't know how to do it [here is a guide](https://randomnerdtutorials.com/esp32-vs-code-platformio-spiffs/);
+3. using any device connect to a new wi-fi access point. It will be called **esp_robot_1** and will have password **password_1**;
+5. open any browser and go to 192.168.4.1;
+6. plary around!
 
 ## Contributions
 
